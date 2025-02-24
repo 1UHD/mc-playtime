@@ -9,25 +9,6 @@ import (
 	"strings"
 )
 
-// vanilla paths
-const Vanilla_mac string = "/Library/Application Support/minecraft/logs/"
-const Vanilla_linux string = "/"
-const Vanilla_windows string = "\\"
-
-//lunar paths
-
-//badlion paths
-
-//forge paths
-
-func GetPath(path string) string {
-	home_dir, err := os.UserHomeDir()
-	if err != nil {
-		return ""
-	}
-	return home_dir + path
-}
-
 func get_first_and_last_line(file_data string) (string, string) {
 
 	log_file := strings.Split(string(file_data), "\n")
