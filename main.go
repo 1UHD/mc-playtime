@@ -101,7 +101,7 @@ func main() {
 
 		newVersion := tools.Version{
 			Path:    playtimeEntry.Text,
-			Picture: "./assets/unknown_version.png",
+			Picture: "assets/unknown_version.png",
 			Title:   titleEntry.Text,
 		}
 		versions = append(versions, newVersion)
