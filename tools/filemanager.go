@@ -1,24 +1,25 @@
 package tools
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"runtime"
 )
 
+const vanilla_picture string = "./assets/vanilla.png"
 const vanilla_mac string = "/Library/Application Support/minecraft/logs/"
-const vanilla_linux string = "/"
-const vanilla_windows string = "\\"
+const vanilla_linux string = "/.minecraft/logs/"
+const vanilla_windows string = "\\AppData\\Roaming\\.minecraft\\logs\\"
 
-const lunar_mac string = "/Library/Application Support/minecraft/logs/"
-const lunar_linux string = "/"
-const lunar_windows string = "\\"
+const lunar_picture string = "./assets/lunar.png"
+const lunar_mac string = "/.lunarclient/offline/multiver/logs/"
+const lunar_linux string = "/.lunarclient/offline/multiver/logs/"
+const lunar_windows string = "\\.lunarclient\\offline\\multiver\\logs\\"
 
-const badlion_mac string = "/Library/Application Support/minecraft/logs/"
-const badlion_linux string = "/"
-const badlion_windows string = "\\"
+const badlion_picture string = "./assets/badlion.png"
+const badlion_mac string = "/Library/Application Support/minecraft/logs/blclient/minecraft/"
+const badlion_linux string = "/.minecraft/logs/blclient/minecraft/"
+const badlion_windows string = "\\AppData\\Roaming\\.minecraft\\logs\\blclient\\minecraft\\"
 
 func Get_path(path string) string {
 	home_dir, err := os.UserHomeDir()
@@ -51,21 +52,26 @@ type Version struct {
 	Title   string
 }
 
-func Get_versions(filename string) ([]Version, error) {
-	file, err := os.Open(filename)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
+func Get_versions() []Version {
+	vanilla_path, lunar_path, badlion_path := Get_os_path()
 
-	data, err := ioutil.ReadAll(file)
-	if err != nil {
-		return nil, err
+	var versions = [...]Version{
+		Version{
+			Path:    vanilla_path,
+			Picture: vanilla_picture,
+			Title:   "Vanilla",
+		},
+		Version{
+			Path:    lunar_path,
+			Picture: lunar_picture,
+			Title:   "Lunar",
+		},
+		Version{
+			Path:    badlion_path,
+			Picture: badlion_picture,
+			Title:   "Badlion",
+		},
 	}
 
-	var versions []Version
-	if err := json.Unmarshal(data, &versions); err != nil {
-		return nil, err
-	}
-	return versions, nil
+	return versions[:]
 }

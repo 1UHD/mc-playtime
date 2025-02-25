@@ -7,6 +7,8 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"fyne.io/fyne/v2/widget"
 )
 
 func get_first_and_last_line(file_data string) (string, string) {
@@ -65,46 +67,49 @@ func Get_time_spent_in_session(file_data string) int32 {
 	return time_spent
 }
 
-func read_gz_file(path string) string {
+func log_to_console(message string, console *widget.Entry) {
+	console.SetText(console.Text + message + "\n")
+}
+
+func read_gz_file(path string, console *widget.Entry) string {
 	file, err := os.Open(path)
 	if err != nil {
-		fmt.Println(err)
+		log_to_console(err.Error(), console)
 		return ""
 	}
 	defer file.Close()
 
 	reader, err := gzip.NewReader(file)
 	if err != nil {
-		fmt.Println(err)
+		log_to_console(err.Error(), console)
 		return ""
 	}
 	defer reader.Close()
 
 	content, err := io.ReadAll(reader)
 	if err != nil {
-		fmt.Println(err)
+		log_to_console(err.Error(), console)
 		return ""
 	}
 
 	return string(content)
 }
 
-func Get_time_for_directory(directory string) int32 {
+func Get_time_for_directory(directory string, console *widget.Entry) int32 {
 	files, err := os.ReadDir(directory)
 	if err != nil {
-		fmt.Println(err)
+		log_to_console(err.Error(), console)
 		return 0
 	}
 
 	var time_spent int32 = 0
 
-	fmt.Println(len(files))
+	log_to_console("Files found in "+directory+": "+strconv.Itoa(len(files)), console)
 	for _, file := range files {
 		if strings.Contains(file.Name(), "log.gz") {
 			file_path := directory + file.Name()
-			file_data := read_gz_file(file_path)
+			file_data := read_gz_file(file_path, console)
 			time_spent_in_session := Get_time_spent_in_session(file_data)
-			fmt.Println("Time spent in", file_path, ":", strconv.Itoa(int(time_spent_in_session)))
 			time_spent += time_spent_in_session
 		}
 	}
