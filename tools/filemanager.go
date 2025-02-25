@@ -6,17 +6,17 @@ import (
 	"runtime"
 )
 
-const vanilla_picture string = "./assets/vanilla.png"
+const vanilla_picture string = "assets/vanilla.png"
 const vanilla_mac string = "/Library/Application Support/minecraft/logs/"
 const vanilla_linux string = "/.minecraft/logs/"
 const vanilla_windows string = "\\AppData\\Roaming\\.minecraft\\logs\\"
 
-const lunar_picture string = "./assets/lunar.png"
+const lunar_picture string = "assets/lunar.png"
 const lunar_mac string = "/.lunarclient/offline/multiver/logs/"
 const lunar_linux string = "/.lunarclient/offline/multiver/logs/"
 const lunar_windows string = "\\.lunarclient\\offline\\multiver\\logs\\"
 
-const badlion_picture string = "./assets/badlion.png"
+const badlion_picture string = "assets/badlion.png"
 const badlion_mac string = "/Library/Application Support/minecraft/logs/blclient/minecraft/"
 const badlion_linux string = "/.minecraft/logs/blclient/minecraft/"
 const badlion_windows string = "\\AppData\\Roaming\\.minecraft\\logs\\blclient\\minecraft\\"
@@ -32,7 +32,6 @@ func Get_path(path string) string {
 
 func Get_os_path() (string, string, string) {
 	operating_system := runtime.GOOS
-	fmt.Println(operating_system)
 
 	switch operating_system {
 	case "darwin":

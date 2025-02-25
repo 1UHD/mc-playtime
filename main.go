@@ -1,7 +1,10 @@
 package main
 
 import (
+	"bytes"
+	"embed"
 	"fmt"
+	"image"
 	"mc-playtime/tools"
 
 	"fyne.io/fyne/v2"
@@ -19,7 +22,29 @@ func update_overall(added_pt int32, overall_label *widget.Label) {
 	overall_label.SetText(fmt.Sprintf("Playtime: %d hours %d minutes %d seconds", overallpt/3600, (overallpt%3600)/60, overallpt%60))
 }
 
+//go:embed assets
+var assetsFS embed.FS
+
+func get_img(filepath string, console *widget.Entry, assetsFS embed.FS) (image.Image, error) {
+	imgData, err := assetsFS.ReadFile(filepath)
+	if err != nil {
+		console.SetText(console.Text + "Error loading image: " + err.Error() + "\n")
+		fmt.Println("in 1: " + err.Error())
+		return nil, err
+	}
+
+	img, _, err := image.Decode(bytes.NewReader(imgData))
+	if err != nil {
+		console.SetText(console.Text + "Error loading image: " + err.Error() + "\n")
+		fmt.Println("in 2: " + err.Error())
+		return nil, err
+	}
+
+	return img, nil
+}
+
 func main() {
+
 	app := app.New()
 	window := app.NewWindow("Minecraft Playtime")
 	window.Resize(fyne.NewSize(400, 400))
@@ -37,9 +62,16 @@ func main() {
 	playtimeContent.Add(overallPlaytime)
 
 	for _, version := range versions {
-		img := canvas.NewImageFromFile(version.Picture)
-		img.SetMinSize(fyne.NewSize(60, 60))
-		img.FillMode = canvas.ImageFillContain
+		pic, err := get_img(version.Picture, consoleLogs, assetsFS)
+		var img *canvas.Image
+		if err != nil {
+			//this should never happen.
+			img = canvas.NewImageFromFile("this will cause the app to not display an image")
+		} else {
+			img = canvas.NewImageFromImage(pic)
+			img.SetMinSize(fyne.NewSize(60, 60))
+			img.FillMode = canvas.ImageFillContain
+		}
 		titleLable := widget.NewLabel(version.Title)
 		playtimeText := widget.NewLabel("Playtime: Calculating")
 
@@ -74,9 +106,16 @@ func main() {
 		}
 		versions = append(versions, newVersion)
 
-		img := canvas.NewImageFromFile(newVersion.Picture)
-		img.SetMinSize(fyne.NewSize(60, 60))
-		img.FillMode = canvas.ImageFillContain
+		pic, err := get_img(newVersion.Picture, consoleLogs, assetsFS)
+		var img *canvas.Image
+		if err != nil {
+			//this should never happen.
+			img = canvas.NewImageFromFile("this will cause the app to not display an image")
+		} else {
+			img = canvas.NewImageFromImage(pic)
+			img.SetMinSize(fyne.NewSize(60, 60))
+			img.FillMode = canvas.ImageFillContain
+		}
 		titleLabel := widget.NewLabel(newVersion.Title)
 		generatedText := widget.NewLabel("Playtime: Calculating")
 
