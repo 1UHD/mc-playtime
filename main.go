@@ -15,6 +15,7 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
+// if your playtime surpasses the 32-bit integer limit, you should consider getting some bitches instead
 var overallpt int32 = 0
 
 func update_overall(added_pt int32, overall_label *widget.Label) {
