@@ -57,7 +57,7 @@ func Get_os_path() (string, string, string, string, string, string) {
 		return Get_path(vanilla_windows), Get_path(lunar_windows), Get_path(badlion_windows), Get_path(curseforge_windows), Get_path(multimc_windows), Get_path(prismlauncher_windows)
 	}
 
-	return "", "", "", ""
+	return "", "", "", "", "", ""
 }
 
 type Version struct {
@@ -77,19 +77,26 @@ func get_all_instance_log_path(application_path string, pic_path string) ([]Vers
 	for _, instance := range instances {
 		var ext string
 
-		if runtime.GOOS == "windows" {
-			ext = "\\.minecraft\\logs\\"
-		} else {
-			ext = "/.minecraft/logs/"
-		}
+		if instance.IsDir() {
 
-		newVersion := Version{
-			Path:    application_path + instance.Name() + ext,
-			Picture: pic_path,
-			Title:   instance.Name(),
-		}
+			if runtime.GOOS == "windows" {
+				ext = "\\.minecraft\\logs\\"
+			} else {
+				ext = "/.minecraft/logs/"
+			}
 
-		_versions = append(_versions, newVersion)
+			_, err := os.Stat(application_path + instance.Name() + ext)
+
+			if err == nil {
+				newVersion := Version{
+					Path:    application_path + instance.Name() + ext,
+					Picture: pic_path,
+					Title:   instance.Name(),
+				}
+
+				_versions = append(_versions, newVersion)
+			}
+		}
 	}
 
 	return _versions[:], nil
